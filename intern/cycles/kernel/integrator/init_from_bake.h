@@ -205,10 +205,21 @@ ccl_device bool integrator_init_from_bake(KernelGlobals kg,
       return true;
     }
 
+    float3 D = normalize(-P);
+
+    N = normalize(N);
+
+    float offset = 0.1f;
+    if (dot(D, N) < offset) {
+       D -= N * (dot(D, N) - offset);
+
+       D = normalize(D);
+    }
+
     /* Setup ray. */
     Ray ray ccl_optional_struct_init;
-    ray.P = P + N;
-    ray.D = -N;
+    ray.P = P + D;
+    ray.D = -D;
     ray.t = FLT_MAX;
     ray.time = 0.5f;
 
